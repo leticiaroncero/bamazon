@@ -57,13 +57,13 @@ function shopAssistant() {
         validate: validateNumber
     }]).then(function (answer) {
         var productRequest = answer.product_id;
-        var quantityRequest = answer.quantity;
+        var quantityRequest = parseInt(answer.quantity);
         inStock(productRequest, quantityRequest);
     });
 };
 
 function inStock(itemId, quantity) {
-    connection.query("SELECT product_name, stock_quantity FROM products WHERE ?",
+    connection.query("SELECT product_name, stock_quantity, price FROM products WHERE ?",
         {
             item_id: itemId
         },
@@ -73,11 +73,27 @@ function inStock(itemId, quantity) {
             if (res.length == 0) {
                 console.log("Item doesn't exist");
             } else if (res[0].stock_quantity >= quantity) {
-                fullfillOrder();
+                var itemPrice = res[0].price;
+                fullfillOrder(itemId, res[0].stock_quantity, quantity, itemPrice);
             } else {
                 console.log("Insufficient quantity!");
             }
         })
 };
 
-function fullfillOrder() { }
+function fullfillOrder(itemId, stockQuantity, quantity, itemPrice) {
+    connection.query("UPDATE products SET ? WHERE ?",
+        [
+            {
+                stock_quantity: stockQuantity - quantity,
+            },
+            {
+                item_id: itemId,
+            }
+        ],
+        function (err, res) {
+            console.log("Your total is: " + itemPrice * quantity);
+            connection.end();
+        }
+    );
+};
