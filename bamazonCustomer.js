@@ -1,6 +1,7 @@
 require("dotenv").config();
 var mysql = require("mysql");
 var Table = require('cli-table');
+var inquirer = require("inquirer");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -30,6 +31,33 @@ function displayProducts() {
             );
         }
         console.log(table.toString());
+
+        shopAssistant();
     })
 };
+
+function validateNumber(input) {
+    if (isNaN(input)) {
+        return "Please, type a number";
+    } else {
+        return true;
+    }
+}
+
+function shopAssistant() {
+    inquirer.prompt([{
+        type: "input",
+        name: "product_id",
+        message: "What is the ID of the item you would like to purchase?",
+        validate: validateNumber
+    }, {
+        type: "input",
+        name: "quantity",
+        message: "How many would you like?",
+        validate: validateNumber
+    }]).then(function (answer) {
+        var productRequest = answer.product_id;
+        var quantityRequest = answer.quantity;
+    });
+}
 
