@@ -37,8 +37,8 @@ function displayProducts() {
 };
 
 function validateNumber(input) {
-    if (isNaN(input)) {
-        return "Please, type a number";
+    if (isNaN(input) || input < 0) {
+        return "Please, type a valid number";
     } else {
         return true;
     }
