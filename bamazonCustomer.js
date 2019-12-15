@@ -58,6 +58,26 @@ function shopAssistant() {
     }]).then(function (answer) {
         var productRequest = answer.product_id;
         var quantityRequest = answer.quantity;
+        inStock(productRequest, quantityRequest);
     });
-}
+};
 
+function inStock(itemId, quantity) {
+    connection.query("SELECT product_name, stock_quantity FROM products WHERE ?",
+        {
+            item_id: itemId
+        },
+        function (err, res) {
+            if (err) throw err;
+
+            if (res.length == 0) {
+                console.log("Item doesn't exist");
+            } else if (res[0].stock_quantity >= quantity) {
+                fullfillOrder();
+            } else {
+                console.log("Insufficient quantity!");
+            }
+        })
+};
+
+function fullfillOrder() { }
