@@ -23,4 +23,4 @@ VALUES
     ("Window Cleaner", "Gardening", 8.02, 120),
     ("Crunchy Cat Treats", "Pet Supplies", 15.78, 160),
     ("Waterproof Bluetooth Speaker", "Electronics", 79.95, 5),
-    ("Ugly Christmas Sweater", "Clothing", 29.99, 6);
+    ("Ugly Christmas Sweater", "Clothing", 29.99, 4);
