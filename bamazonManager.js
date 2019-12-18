@@ -62,7 +62,7 @@ function displayProducts() {
         var table = new Table({
             head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
             , colWidths: [9, 20, 20, 8, 16]
-        });        
+        });
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
@@ -79,7 +79,7 @@ function displayLowInventory() {
         var table = new Table({
             head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
             , colWidths: [9, 20, 20, 8, 16]
-        });        
+        });
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
@@ -123,7 +123,11 @@ function addToInventory() {
                 {
                     item_id: itemToAdd,
                 }], function (err, res) {
-                    console.log("Added " + quantityToAdd + " new items to your stock.");
+                    if (res.affectedRows === 0) {
+                        console.log("Sorry, that product doesn't exist");
+                    } else {
+                        console.log("Added " + quantityToAdd + " new items to your stock.");
+                    }
                     showOptions();
                 }
             );
