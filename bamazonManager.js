@@ -133,3 +133,64 @@ function addToInventory() {
             );
         });
 }
+
+function addNewProduct() {
+    inquirer
+        .prompt([{
+            type: "input",
+            name: "product",
+            message: "What is the name of the product you would like to add?",
+            validate: function (input) {
+                if (input.trim().length === 0) {
+                    return "Please, enter a product name";
+                } else {
+                    return true;
+                }
+            }
+        },
+        {
+            type: "list",
+            name: "department_name",
+            message: "Which department does this product fall into?",
+            choices: ["Games", "Electronics", "Books", "Clothing", "Gardening", "Pet Supplies"],
+        },
+        {
+            type: "input",
+            name: "product_price",
+            message: "How much does it cost?",
+            validate: function (input) {
+                if (isNaN(input) || input < 0) {
+                    return "Please, type a valid price";
+                } else {
+                    return true;
+                }
+            }
+        }, {
+            type: "input",
+            name: "product_quantity",
+            message: "How many do we have?",
+            validate: function (input) {
+                if (isNaN(input) || input < 0) {
+                    return "Please, type a valid quantity";
+                } else {
+                    return true;
+                }
+            }
+        }]).then(function (answer) {
+            var newProduct = answer.product;
+            var departmentName = answer.department_name;
+            var newProductPrice = answer.product_price;
+            var newProductQuantity = answer.product_quantity;
+            connection.query("INSERT INTO products SET ?",
+                {
+                    product_name: newProduct,
+                    department_name: departmentName,
+                    price: newProductPrice,
+                    stock_quantity: newProductQuantity
+                },
+                function (err, res) {
+                    console.log(newProduct + " added to bamazon!");
+                    showOptions();
+                });
+        });
+}
