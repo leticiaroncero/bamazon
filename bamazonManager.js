@@ -17,10 +17,10 @@ connection.connect(function (err) {
     showOptions();
 });
 
-var table = new Table({
-    head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
-    , colWidths: [9, 20, 20, 8, 16]
-});
+// var table = new Table({
+//     head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
+//     , colWidths: [9, 20, 20, 8, 16]
+// });
 
 function showOptions() {
     inquirer
@@ -59,25 +59,35 @@ function showOptions() {
 function displayProducts() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
+        var table = new Table({
+            head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
+            , colWidths: [9, 20, 20, 8, 16]
+        });        
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
             );
         }
         console.log(table.toString());
-    })
-};
+        showOptions();
+    });
+}
 
 function displayLowInventory() {
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, res) {
         if (err) throw err;
+        var table = new Table({
+            head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
+            , colWidths: [9, 20, 20, 8, 16]
+        });        
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
             );
         }
         console.log(table.toString());
-    })
+        showOptions();
+    });
 }
 
 function addToInventory() {
@@ -94,27 +104,28 @@ function addToInventory() {
                 }
             }
         },
-            {
-                type: "input",
-                name: "quantity",
-                message: "How many items would you like to add?",
-                validate: function (input) {
-                    if (isNaN(input) || input < 0) {
-                        return "Please, type a valid number";
-                    } else {
-                        return true;
-                    }
+        {
+            type: "input",
+            name: "quantity",
+            message: "How many items would you like to add?",
+            validate: function (input) {
+                if (isNaN(input) || input < 0) {
+                    return "Please, type a valid number";
+                } else {
+                    return true;
                 }
-            }]).then(function (answer) {
-                var itemToAdd = answer.product_id;
-                var quantityToAdd = parseInt(answer.quantity);
-                connection.query("UPDATE products SET stock_quantity=stock_quantity+? WHERE ?", [
-                    quantityToAdd,
-                    {
-                        item_id: itemToAdd,
-                    }], function (err, res) {
-                        console.log("Added " + quantityToAdd + " new items to your stock.");
-                    }
-                );
-            })
+            }
+        }]).then(function (answer) {
+            var itemToAdd = answer.product_id;
+            var quantityToAdd = parseInt(answer.quantity);
+            connection.query("UPDATE products SET stock_quantity=stock_quantity+? WHERE ?", [
+                quantityToAdd,
+                {
+                    item_id: itemToAdd,
+                }], function (err, res) {
+                    console.log("Added " + quantityToAdd + " new items to your stock.");
+                    showOptions();
+                }
+            );
+        });
 }
