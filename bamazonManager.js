@@ -68,7 +68,7 @@ function displayProducts() {
     })
 };
 
-function displayLowInventory(){
+function displayLowInventory() {
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
@@ -78,4 +78,43 @@ function displayLowInventory(){
         }
         console.log(table.toString());
     })
+}
+
+function addToInventory() {
+    inquirer
+        .prompt([{
+            type: "input",
+            name: "product_id",
+            message: "What is the ID of the item you would like to add to your inventory?",
+            validate: function (input) {
+                if (isNaN(input) || input < 0) {
+                    return "Please, type a valid number";
+                } else {
+                    return true;
+                }
+            }
+        },
+            {
+                type: "input",
+                name: "quantity",
+                message: "How many items would you like to add?",
+                validate: function (input) {
+                    if (isNaN(input) || input < 0) {
+                        return "Please, type a valid number";
+                    } else {
+                        return true;
+                    }
+                }
+            }]).then(function (answer) {
+                var itemToAdd = answer.product_id;
+                var quantityToAdd = parseInt(answer.quantity);
+                connection.query("UPDATE products SET stock_quantity=stock_quantity+? WHERE ?", [
+                    quantityToAdd,
+                    {
+                        item_id: itemToAdd,
+                    }], function (err, res) {
+                        console.log("Added " + quantityToAdd + " new items to your stock.");
+                    }
+                );
+            })
 }
