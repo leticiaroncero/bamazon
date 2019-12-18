@@ -16,11 +16,6 @@ connection.connect(function (err) {
     showOptions();
 });
 
-// var table = new Table({
-//     head: ['item_id', 'product_name', 'department_name', 'price', 'stock_quantity']
-//     , colWidths: [9, 20, 20, 8, 16]
-// });
-
 function showOptions() {
     inquirer
         .prompt({
